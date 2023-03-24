@@ -5,9 +5,42 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: url(./assets/bg.png);
+  background-size: cover;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+html{
+  background: #010004 !important;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.kurisu{
+  height: 1000px !important;
+  width: auto;
+}
+
+.chat{
+  position: fixed;
+  height: 200px;
+  width: 800px;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 767px) {
+  .chat{
+    width: 100%;
+    height: 30%;
+    margin: 0;
+    left: 0;
+    transform: none;
+  }
 }
