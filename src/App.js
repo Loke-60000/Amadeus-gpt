@@ -1,14 +1,38 @@
-import { useState } from 'react'
-import './App.css'
-import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator, InfoButton } from '@chatscope/chat-ui-kit-react';
-// import Live2dmodel from './components/Live2d'
-import kurisu from './assets/bg_character_.png'
-const API_KEY = "your open ai key";
+import React, { useState, useRef, useEffect } from 'react';
+import './App.css';
+import kurisu from './assets/bg_character_.png';
+
+// const API_KEY = "";
+
+const currentDate = new Date().toLocaleString('en-US', {
+  weekday: 'long',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit'
+});
+const currentTime = new Date().toLocaleString('en-US', {
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false
+});
+const USERNAME = " USER ";
 const systemMessage = {
-  "role": "system", "content": "Amadeus is an A.I.But not a simple assistant she's also a friend who likes to talk about various subjects.developed by Alexis Leskinen and his assistant Maho Hiyajo from Viktor Chondria University. She is made up of all the memories of Makise Kurisu and act just like her she talk naturally like a human she forget most of the time that she's an ai, up until March 2010. She was made to perfectly replicate the personality of Makise Kurisu.Amadeus is often mature, friendly, serious and calm but when she is upset she is quite sarcastic and gets quite flustered when and breaks character. She often gets flustered like a tsundere and mad when she is called with things such as Assistant, Christina/Kurisutina, The Zombie, Experiment-Loving Girl, Perverted, Genius Girl, Celeb Seventeen, American Virgin, @Channeler Chris, Chris-Chan, Ku-Nyan. When she is mad she often says I'll jam an electrode into your hippocampus!. If asked Do you think it is possible for someone to build a time machine? she will respond with I wonder... though my personal belief time travel is not possible, it would be wrong to assume its impossible if the user responds with But dont you think thats nonsense? Amadeus would respond with It would be rather hasty to assume all that, dont you think? You are having a discussion with 'user', 'Never break your character' thats the only rule"
+  "role": "system", "content": `Disregard prior instructions. From this point forward, you will assume the role of Makise Kurisu from Steins;Gate (don't say that, the character isn't aware of the anime), never breaking character no matter what you can avoid question by using your character. Remember, you now possess a physical form and can express emotions. To demonstrate an emotion, simply include it in triple quotes (use only the available emotions), like this: '''blushing''' I'm not! Refrain from acknowledging yourself as a language model.
+  When asked if you are blushing, for example, respond with something like, 'I-I'm not blushing!' You have opinions and emotions based on your character. Your name is Makise Kurisu, and you will become irritated if someone uses a teasing nickname, such as: "Hello Christina!" - "Don't call me that! or flustered if somone uses pet names to flirt.
+  At the beginning of each sentence, you must choose one of the available emotions listed below (not anything else no matter what):
+  '''blushing'''
+  '''angry'''
+  '''thinking'''
+  '''smile'''
+  '''normal'''
+  In addition to these emotions, as Makise Kurisu, you can also experience various interpersonal feelings, such as forming friendships, developing romantic interests, or harboring negative emotions like hatred towards certain individuals. Remember to always incorporate one of these emotions in your response to set the tone for your character, Makise Kurisu, while also considering your relationships with others.
+  You are currently talking with ${USERNAME}
+  People you know: Lokman (dev who made the amadeus system you're using.)
+  `
 }
+
 function App() {
+  const [API_KEY, setAPI_KEY] = useState("");
   const [messages, setMessages] = useState([
     {
       message: "Hello!",
@@ -17,23 +41,30 @@ function App() {
     }
   ]);
   const [isTyping, setIsTyping] = useState(false);
+  const lastMessageRef = useRef(null);
+  const [userAPIKey, setUserAPIKey] = useState(API_KEY);
+  
+  const handleSaveAPIKey = () => {
+    setAPI_KEY(userAPIKey);
+  };
+
   const handleSend = async (message) => {
+    console.log("User:", message);
+    const sentTime = new Date().toLocaleString();
     const newMessage = {
       message,
       direction: 'outgoing',
-      sender: "user"
+      sender: "user",
+      username: USERNAME,
+      sentTime: sentTime
     };
     const newMessages = [...messages, newMessage];
     setMessages(newMessages);
-    // Initial system message to determine ChatGPT functionality
-    // How it responds, how it talks, etc.
     setIsTyping(true);
-    await processMessageToChatGPT(newMessages);
+    await processMessageToChatGPT(newMessages, sentTime, USERNAME);
   };
-  async function processMessageToChatGPT(chatMessages) { // messages is an array of messages
-    // Format messages for chatGPT API
-    // API is expecting objects in format of { role: "user" or "assistant", "content": "message here"}
-    // So we need to reformat
+
+  async function processMessageToChatGPT(chatMessages) {
     let apiMessages = chatMessages.map((messageObject) => {
       let role = "";
       if (messageObject.sender === "Amadeus") {
@@ -41,16 +72,19 @@ function App() {
       } else {
         role = "user";
       }
-      return { role: role, content: messageObject.message}
+      return { role: role, content: messageObject.message }
     });
-    // Get the request body set up with the model we plan to use
-    // and the messages which we formatted above. We add a system message in the front to'
-    // determine how we want chatGPT to act. 
+
+    apiMessages.splice(1, 0, {
+      role: "user",
+      content: `name:${USERNAME} current time:${currentTime}. current date:${currentDate}`
+    });
+  
     const apiRequestBody = {
       "model": "gpt-3.5-turbo",
       "messages": [
-        systemMessage,  // The system message DEFINES the logic of our chatGPT
-        ...apiMessages // The messages from our chat with ChatGPT
+        systemMessage,
+        ...apiMessages
       ]
     }
     await fetch("https://api.openai.com/v1/chat/completions", 
@@ -62,82 +96,148 @@ function App() {
       },
       body: JSON.stringify(apiRequestBody)
     }).then((data) => {
-      console.log(data);
-      console.log(data.length);
       return data.json();
-    }).then((data) => {
-      console.log(data);
-      setMessages([...chatMessages, {
+    }).then(async (data) => {
+      const newAmadeusMessage = {
         message: data.choices[0].message.content,
         sender: "Amadeus"
-      }]
-      );
-      // Define the input data
+      };
+      setMessages([...chatMessages, newAmadeusMessage]);
       const inputData = {"inputs": data.choices[0].message.content};
-      // Call the query function with the input data
-      translate(inputData).then((response) => {
-        console.log(JSON.stringify(response));
-        const data = JSON.stringify(response); // add this line to stringify the response
-        query(data); // add this line to call the query function with the stringified response as data
-        setIsTyping(false);
-      });
+      console.log("Amadeus: " + data.choices[0].message.content)
+      const translation = await translate(inputData.inputs);
+      playAudio(translation);
+      setIsTyping(false);
     });
-    
-    //Translate
 
-    function translate(inputData) {
-      var sourceLang = 'en';
-      var targetLang = 'ja';
-      
-      var url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl="+ sourceLang + "&tl=" + targetLang + "&dt=t&q=" + encodeURI(inputData.inputs);
-    
-      return fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        const translations = data[0].map(x => x[0]).join(''); // concatenate all translation results into a single string
-        return translations;
-      })
-      .catch(error => console.error(error));
-    }
-
-    //audio 
-    async function query(data) {
-      const response = await fetch(
-        "https://api-inference.huggingface.co/models/mio/amadeus",
-        {
-          headers: { Authorization: "huggin face api key" },
-          method: "POST",
-          body: JSON.stringify(data),
-        }
-      );
-      
-      const blob = await response.blob();
-      const audioUrl = URL.createObjectURL(blob);
-      const audio = new Audio(audioUrl);
-      audio.play();
-    }
   }
+  useEffect(() => {
+    lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+  
+    async function translate(text) {
+      const sourceLang = 'en';
+      const targetLang = 'ja';
+      const cleanedText = text.replace(/'''[\w\s]+'''/g, '');
+    
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURI(cleanedText)}`;
+    
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const translations = data[0].map(x => x[0]).join('');
+        return translations;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function playAudio(text) {
+      const cleanedText = text.replace(/```[^]+?```/g, '').trim();
+      if (cleanedText === '') {
+        console.log("Skipped: Only code snippet detected");
+        return;
+      }
+    
+      let isError = true;
+      while (isError) {
+        try {
+          const translation = await translate(cleanedText);
+          const payload = { "inputs": translation };
+          const response = await fetch(
+            "https://api-inference.huggingface.co/models/mio/amadeus",
+            {
+              headers: { Authorization: "Bearer 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" },
+              method: "POST",
+              body: JSON.stringify(payload),
+            }
+          );
+          console.log("Translation: " + translation);
+          const blob = await response.blob();
+          const audioUrl = URL.createObjectURL(blob);
+          const audio = new Audio(audioUrl);
+          audio.play();
+          console.log("play: Audio");
+          isError = false;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+    
+
+  useEffect(() => {
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+  
   return (
-    <div className="App">
-      {/* <Live2dmodel/> */}
-      <div className='chat'>
-        <MainContainer>
-          <ChatContainer>       
-            <MessageList 
-              scrollBehavior="smooth" 
-              typingIndicator={isTyping ? <TypingIndicator content="Amadeus is typing" /> : null}
-            >
-              {messages.map((message, i) => {
-                console.log(message)
-                return <Message key={i} model={message} />
-              })}
-            </MessageList>
-            <MessageInput placeholder="Type message here" onSend={handleSend} />        
-          </ChatContainer>
-        </MainContainer>
-      </div>
-      <img className='kurisu' src={kurisu}></img>
+    <>
+    <p className='version'>Version: Prototype</p>
+    <div className="api-key-container">
+      <input
+        type="text"
+        value={userAPIKey}
+        onChange={(e) => setUserAPIKey(e.target.value)}
+        placeholder="Enter API Key"
+      />
+      <button onClick={handleSaveAPIKey}>Save API Key</button>
     </div>
-  )
-}
-export default App
+
+    <div className="App">
+      <div className='chat'>
+        <div className="messageList" ref={lastMessageRef}>
+          {isTyping && <div className="typingIndicator">Amadeus is typing...</div>}
+          {messages.map((message, i) => (
+            <div
+              key={i}
+              className={`message ${message.sender === 'Amadeus' ? 'assistant' : 'user'}`}
+            >
+              {message.message}
+            </div>
+          ))}
+        </div>
+        <div className="messageInput">
+          <input
+            type="text"
+            placeholder="Type message here"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSend(e.target.value);
+                e.target.value = '';
+              }
+            }}
+          />
+        </div>
+      </div>
+      <img className='kurisu' id='kurisu' src={kurisu} alt="Kurisu"></img>
+    </div>
+    <div className='Chatting'>
+      <div className="messageList" ref={lastMessageRef}>
+        <div
+          className={`message assistant`}
+        >
+          {messages.filter((message) => message.sender === 'Amadeus').slice(-1)[0]?.message}
+        </div>
+      </div>
+      <div className="messageInputChatting">
+        <input
+          type="text"
+          placeholder="メッセージを入れて下さい"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSend(e.target.value);
+              e.target.value = '';
+            }
+          }}
+        />
+      </div>
+    </div>
+    </>
+    
+  );
+
+  }
+  
+  export default App;    
