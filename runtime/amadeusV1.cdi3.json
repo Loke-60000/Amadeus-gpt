@@ -1,0 +1,200 @@
+{
+	"Version": 3,
+	"Parameters": [
+		{
+			"Id": "ParamEyeROpen",
+			"GroupId": "ParamGroup",
+			"Name": "Eyes Blinking"
+		},
+		{
+			"Id": "Param",
+			"GroupId": "ParamGroup",
+			"Name": "LashWiggle R"
+		},
+		{
+			"Id": "Param2",
+			"GroupId": "ParamGroup",
+			"Name": "LashWiggle R 2"
+		},
+		{
+			"Id": "Param3",
+			"GroupId": "ParamGroup",
+			"Name": "IrisScale R"
+		},
+		{
+			"Id": "ParamEyeBallX",
+			"GroupId": "ParamGroup",
+			"Name": "Eyeball X"
+		},
+		{
+			"Id": "ParamEyeBallY",
+			"GroupId": "ParamGroup",
+			"Name": "Eyeball Y"
+		},
+		{
+			"Id": "ParamBreath",
+			"GroupId": "ParamGroup2",
+			"Name": "Breathing"
+		},
+		{
+			"Id": "Param4",
+			"GroupId": "ParamGroup2",
+			"Name": "Arm Physics"
+		},
+		{
+			"Id": "Param5",
+			"GroupId": "ParamGroup2",
+			"Name": "Hair Physics"
+		},
+		{
+			"Id": "Param6",
+			"GroupId": "ParamGroup3",
+			"Name": "Arms Thinking Movement"
+		},
+		{
+			"Id": "Param8",
+			"GroupId": "ParamGroup3",
+			"Name": "Thinking FaceExpression"
+		},
+		{
+			"Id": "Param7",
+			"GroupId": "ParamGroup3",
+			"Name": "Arms Movement Physics"
+		},
+		{
+			"Id": "ParamEyeRSmile",
+			"GroupId": "ParamGroup4",
+			"Name": "Eyes Smile (Eyes need to be closed)"
+		},
+		{
+			"Id": "Param9",
+			"GroupId": "ParamGroup4",
+			"Name": "Blushing"
+		},
+		{
+			"Id": "ParamMouthOpenY",
+			"GroupId": "ParamGroup5",
+			"Name": "Mouth Open"
+		},
+		{
+			"Id": "ParamMouthForm",
+			"GroupId": "ParamGroup5",
+			"Name": "Mouth Form"
+		}
+	],
+	"ParameterGroups": [
+		{
+			"Id": "ParamGroup",
+			"GroupId": "",
+			"Name": "Eyes Blinking/Moviment"
+		},
+		{
+			"Id": "ParamGroup2",
+			"GroupId": "",
+			"Name": "Breathing"
+		},
+		{
+			"Id": "ParamGroup3",
+			"GroupId": "",
+			"Name": "Thinking Expression"
+		},
+		{
+			"Id": "ParamGroup4",
+			"GroupId": "",
+			"Name": "Smiling/Blushing Expression"
+		},
+		{
+			"Id": "ParamGroup5",
+			"GroupId": "",
+			"Name": "Mouth movement"
+		}
+	],
+	"Parts": [
+		{
+			"Id": "Part10",
+			"Name": "Kurisu_model_Lokman BROW0.psd (Corresponding layer not found)"
+		},
+		{
+			"Id": "refs",
+			"Name": "refs"
+		},
+		{
+			"Id": "blushing",
+			"Name": "blushing"
+		},
+		{
+			"Id": "front_hairs",
+			"Name": "front_hairs"
+		},
+		{
+			"Id": "arm_think",
+			"Name": "arm_think"
+		},
+		{
+			"Id": "labcoat_and_shirt",
+			"Name": "labcoat_and_shirt"
+		},
+		{
+			"Id": "arms_iddle_anim",
+			"Name": "arms_iddle_anim"
+		},
+		{
+			"Id": "base_arms",
+			"Name": "base_arms"
+		},
+		{
+			"Id": "Part5",
+			"Name": "Brows"
+		},
+		{
+			"Id": "head",
+			"Name": "head"
+		},
+		{
+			"Id": "Part2",
+			"Name": "Brows"
+		},
+		{
+			"Id": "Part3",
+			"Name": "Mouth"
+		},
+		{
+			"Id": "lip",
+			"Name": "lip"
+		},
+		{
+			"Id": "Part",
+			"Name": "right eye"
+		},
+		{
+			"Id": "shadows",
+			"Name": "shadows"
+		},
+		{
+			"Id": "Part4",
+			"Name": "EyeL"
+		},
+		{
+			"Id": "Part6",
+			"Name": "top lip"
+		},
+		{
+			"Id": "Part7",
+			"Name": "Bottom lip"
+		},
+		{
+			"Id": "Part8",
+			"Name": "Group 22"
+		},
+		{
+			"Id": "right",
+			"Name": "right"
+		}
+	],
+	"CombinedParameters": [
+		[
+			"ParamEyeBallX",
+			"ParamEyeBallY"
+		]
+	]
+}

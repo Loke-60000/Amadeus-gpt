@@ -1,0 +1,25 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "amadeusV1.moc3",
+		"Textures": [
+			"amadeusV1.1024/texture_00.png"
+		],
+		"Physics": "amadeusV1.physics3.json",
+		"DisplayInfo": "amadeusV1.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeROpen"
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		}
+	]
+}
